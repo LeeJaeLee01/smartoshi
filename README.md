@@ -63,7 +63,18 @@ No order book or matching engine is implemented, per spec.
 3. Run:
    - `cargo run`
 
-Server starts on `127.0.0.1:3000`.
+Server starts on `http://127.0.0.1:3030` (override with env `PORT`).
+
+## Docker (FE + BE)
+
+```bash
+# Edit REACT_APP_API_URL in docker-compose.yml for your server IP/domain, then:
+docker compose build
+docker compose up -d
+```
+
+- Backend API: `http://localhost:3030`
+- Frontend UI: `http://localhost:8080`
 
 ## Test Instructions
 

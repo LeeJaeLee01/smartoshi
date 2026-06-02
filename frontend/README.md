@@ -9,22 +9,41 @@ React + TypeScript (Create React App) dashboard for the Mini Exchange backend as
 - **Cursor Skills** — documents `smartoshi-prompt-starter` and `smartoshi-assignment`
 - **AI Usage** — summary aligned with `../AI_USAGE.md`
 
-UI follows design tokens from `DESIGN.md` (Apple-inspired: Action Blue, parchment surfaces, SF Pro stack).
+UI follows design tokens from `DESIGN.md` (Apple-inspired).
 
 ## Prerequisites
 
 - Node.js 18+
-- Rust backend running on port 3000 (`cargo run` from repo root)
+- Rust backend on port **3030** (`cargo run` from repo root)
 
-## Run
+## Run locally
 
 ```bash
 cd frontend
-cp .env.example .env   # optional
-PORT=3001 npm start    # use 3001 if backend is on 3000
+npm install
+npm start
 ```
 
-Open http://localhost:3001 (or the port shown in the terminal).
+Default CRA port is 3000; backend uses 3030 — no conflict.
+
+Set API URL in `.env`:
+
+```env
+REACT_APP_API_URL=http://127.0.0.1:3030
+```
+
+## Docker
+
+From repo root:
+
+```bash
+docker compose up -d --build
+```
+
+- Frontend: http://localhost:8080
+- Backend: http://localhost:3030
+
+Before deploy, set `REACT_APP_API_URL` build arg in `docker-compose.yml` to a URL the **browser** can reach (server IP/domain + port 3030).
 
 ## Build
 
@@ -36,9 +55,5 @@ npm run build
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `REACT_APP_API_URL` | `http://127.0.0.1:3000` | Rust API base URL |
+| `REACT_APP_API_URL` | `http://127.0.0.1:3030` | Rust API base URL |
 | `PORT` | `3000` | CRA dev server port |
-
-## CORS
-
-If the browser blocks requests, configure CORS on the Rust backend or use the same host. For local dev, both services on `127.0.0.1` with explicit `REACT_APP_API_URL` usually works.

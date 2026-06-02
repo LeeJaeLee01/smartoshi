@@ -2,7 +2,7 @@ import type { CreateOrderRequest } from "../types/api";
 import type { ApiCallResult } from "../types/api";
 
 const API_BASE =
-  process.env.REACT_APP_API_URL?.replace(/\/$/, "") || "http://127.0.0.1:3000";
+  process.env.REACT_APP_API_URL?.replace(/\/$/, "") || "http://127.0.0.1:3030";
 
 async function request(path: string, init?: RequestInit): Promise<ApiCallResult> {
   const started = performance.now();
@@ -34,7 +34,7 @@ async function request(path: string, init?: RequestInit): Promise<ApiCallResult>
       status: 0,
       data: {
         error: err instanceof Error ? err.message : "Network error",
-        hint: "Ensure Rust backend is running: cargo run (port 3000)",
+        hint: "Ensure Rust backend is running: cargo run (port 3030)",
       },
       durationMs: Math.round(performance.now() - started),
     };
