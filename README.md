@@ -65,16 +65,104 @@ No order book or matching engine is implemented, per spec.
 
 Server starts on `http://127.0.0.1:3030` (override with env `PORT`).
 
-## Docker (FE + BE)
+## Run with Docker (Frontend + Backend)
+
+Docker Compose runs both services: Rust API on port **3030** and React UI (Nginx) on port **8080**.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose v2 (`docker compose`)
+
+### 1. Configure API URL for the frontend (important)
+
+Create React App bakes `REACT_APP_API_URL` at **build time**. The value must be reachable from the **user's browser**, not from inside the container.
+
+Edit `docker-compose.yml` under `frontend.build.args`:
+
+```yaml
+args:
+  REACT_APP_API_URL: http://localhost:3030
+```
+
+Examples:
+
+| Scenario | `REACT_APP_API_URL` |
+|----------|---------------------|
+| Same machine | `http://localhost:3030` |
+| Remote server | `http://YOUR_SERVER_IP:3030` |
+| Domain + TLS | `https://api.yourdomain.com` |
+
+Do **not** use `http://backend:3030` — that hostname only works inside Docker, not in the browser.
+
+### 2. Build and start
+
+From the repository root:
 
 ```bash
-# Edit REACT_APP_API_URL in docker-compose.yml for your server IP/domain, then:
 docker compose build
 docker compose up -d
 ```
 
-- Backend API: `http://localhost:3030`
-- Frontend UI: `http://localhost:8080`
+Check status:
+
+```bash
+docker compose ps
+docker compose logs -f
+```
+
+### 3. Access the app
+
+| Service | URL |
+|---------|-----|
+| Frontend (UI) | http://localhost:8080 |
+| Backend (API) | http://localhost:3030 |
+
+Quick API check:
+
+```bash
+curl http://localhost:3030/symbols
+curl http://localhost:3030/prices
+```
+
+Open the frontend → **Backend API Explorer** to call endpoints from the browser.
+
+### 4. Stop and remove
+
+```bash
+docker compose down
+```
+
+Remove images as well:
+
+```bash
+docker compose down --rmi local
+```
+
+### 5. Rebuild after code changes
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
+
+Rebuild only one service:
+
+```bash
+docker compose build backend
+docker compose build frontend
+docker compose up -d
+```
+
+### Docker layout
+
+| File | Purpose |
+|------|---------|
+| `Dockerfile` | Rust backend (multi-stage build) |
+| `docker-compose.yml` | Orchestrates `backend` + `frontend` |
+| `frontend/Dockerfile` | React build + Nginx static server |
+| `frontend/nginx.conf` | SPA routing for React |
+
+Backend listens on `0.0.0.0`; port is set via env `PORT` (default **3030** in Docker).
 
 ## Test Instructions
 
