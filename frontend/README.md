@@ -40,7 +40,7 @@ From repo root:
 docker compose up -d --build
 ```
 
-- Frontend: http://localhost:8080
+- Frontend: http://localhost:8080 (container serves on port 3000 via `serve`)
 - Backend: http://localhost:3030
 
 Before deploy, set `REACT_APP_API_URL` build arg in `docker-compose.yml` to a URL the **browser** can reach (server IP/domain + port 3030).

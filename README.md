@@ -159,10 +159,22 @@ docker compose up -d
 |------|---------|
 | `Dockerfile` | Rust backend (multi-stage build) |
 | `docker-compose.yml` | Orchestrates `backend` + `frontend` |
-| `frontend/Dockerfile` | React build + Nginx static server |
-| `frontend/nginx.conf` | SPA routing for React |
+| `frontend/Dockerfile` | React build + `serve` static server (Node) |
 
 Backend listens on `0.0.0.0`; port is set via env `PORT` (default **3030** in Docker).
+
+### Docker build troubleshooting (frontend `npm ci` fails)
+
+Common on small EC2 instances (t2.micro / 1GB RAM):
+
+| Symptom | Fix |
+|---------|-----|
+| Build stops at `RUN npm ci` / exit 137 | Out of memory — add swap: `sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile` |
+| `ETIMEDOUT` / network errors | Retry build; check instance outbound internet |
+| `package-lock.json` missing | Ensure `frontend/package-lock.json` is on the server (`git pull` / copy file) |
+| Lock out of sync | On dev machine: `cd frontend && npm install`, commit `package-lock.json`, redeploy |
+
+See full npm error: `docker compose build frontend --progress=plain 2>&1 | tee build.log`
 
 ## Test Instructions
 

@@ -1,10 +1,14 @@
 # syntax=docker/dockerfile:1
 
-FROM node:20-alpine AS build
+# bookworm-slim: fewer native-module issues than alpine during CRA build
+FROM node:20-bookworm-slim AS build
 WORKDIR /app
 
+ENV NODE_OPTIONS=--max-old-space-size=2048
+ENV npm_config_jobs=1
+
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 
 COPY public ./public
 COPY src ./src
@@ -15,10 +19,14 @@ ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 RUN npm run build
 
-FROM nginx:1.27-alpine
+FROM node:20-alpine
+WORKDIR /app
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/build /usr/share/nginx/html
+RUN npm install -g serve@14.2.4
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build /app/build ./build
+
+ENV PORT=3000
+EXPOSE 3000
+
+CMD ["serve", "-s", "build", "-l", "3000"]
