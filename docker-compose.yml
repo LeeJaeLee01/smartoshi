@@ -7,8 +7,11 @@ services:
       PORT: "3030"
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://127.0.0.1:3030}
     ports:
-      - "8080:80"
+      - "8080:3000"
     depends_on:
       - backend

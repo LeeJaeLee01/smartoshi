@@ -68,17 +68,14 @@ Server starts on `http://127.0.0.1:3030` (override with env `PORT`).
 ## Docker
 
 ```bash
+cp .env.example .env    # sửa REACT_APP_API_URL = http://YOUR_PUBLIC_IP:3030
 docker compose up -d --build
 ```
 
-- UI: http://YOUR_IP:8080 (nginx serve FE + proxy API sang backend)
-- API trực tiếp: http://YOUR_IP:3030
-
-Không cần ghi env trong Dockerfile — FE gọi cùng origin, nginx chuyển tiếp sang `backend:3030`.
+- UI: http://YOUR_IP:8080 (`serve`, không dùng nginx)
+- API: http://YOUR_IP:3030
 
 Security Group: **22, 3030, 8080**.
-
-EC2 1GB thiếu RAM khi build FE: thêm swap 2GB rồi build lại.
 
 ## Test Instructions
 

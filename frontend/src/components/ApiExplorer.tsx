@@ -44,7 +44,7 @@ export function ApiExplorer() {
         <h2 className="api-explorer__title">Backend API Explorer</h2>
         <p className="api-explorer__lead">
           Live calls to the Rust service. Start the backend with{" "}
-          <code>cargo run</code> on port 3030, then use the actions below.
+          Backend on port 3030. Set <code>REACT_APP_API_URL</code> when building the frontend image.
         </p>
 
         <div className="api-explorer__grid">
