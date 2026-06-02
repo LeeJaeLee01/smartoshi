@@ -1,6 +1,12 @@
-FROM node:20-alpine
+FROM node:20-alpine AS build
 WORKDIR /app
-RUN npm install -g serve@14.2.4
-COPY build ./build
-EXPOSE 3000
-CMD ["serve", "-s", "build", "-l", "3000"]
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+ENV CI=true
+RUN npm run build
+
+FROM nginx:alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80

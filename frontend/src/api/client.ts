@@ -1,8 +1,9 @@
 import type { CreateOrderRequest } from "../types/api";
 import type { ApiCallResult } from "../types/api";
 
-const API_BASE =
-  process.env.REACT_APP_API_URL?.replace(/\/$/, "") || "http://127.0.0.1:3030";
+// Docker: nginx proxies /symbols, /orders, … → backend (same origin, no env in Dockerfile).
+// Local dev: set REACT_APP_API_URL in frontend/.env (e.g. http://127.0.0.1:3030).
+const API_BASE = process.env.REACT_APP_API_URL?.replace(/\/$/, "") ?? "";
 
 async function request(path: string, init?: RequestInit): Promise<ApiCallResult> {
   const started = performance.now();

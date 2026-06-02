@@ -65,34 +65,20 @@ No order book or matching engine is implemented, per spec.
 
 Server starts on `http://127.0.0.1:3030` (override with env `PORT`).
 
-## Docker (đơn giản)
-
-Frontend **không build trong Docker** — chỉ copy thư mục `frontend/build` (tránh lỗi `npm` trên EC2).
-
-### Cách 1 — một lệnh (khuyên dùng)
+## Docker
 
 ```bash
-# EC2: đổi IP public của server
-REACT_APP_API_URL=http://100.52.218.12:3030 ./scripts/docker-up.sh
-```
-
-### Cách 2 — từng bước
-
-```bash
-cd frontend
-npm install
-REACT_APP_API_URL=http://100.52.218.12:3030 npm run build   # đổi IP
-
-cd ..
 docker compose up -d --build
 ```
 
-- UI: `http://YOUR_IP:8080`
-- API: `http://YOUR_IP:3030`
+- UI: http://YOUR_IP:8080 (nginx serve FE + proxy API sang backend)
+- API trực tiếp: http://YOUR_IP:3030
 
-Dừng: `docker compose down`
+Không cần ghi env trong Dockerfile — FE gọi cùng origin, nginx chuyển tiếp sang `backend:3030`.
 
-Mở Security Group: **8080**, **3030**, **22**.
+Security Group: **22, 3030, 8080**.
+
+EC2 1GB thiếu RAM khi build FE: thêm swap 2GB rồi build lại.
 
 ## Test Instructions
 
