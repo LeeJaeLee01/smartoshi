@@ -2,8 +2,17 @@ import type { CreateOrderRequest } from "../types/api";
 import type { ApiCallResult } from "../types/api";
 
 // Set REACT_APP_API_URL at build time (docker-compose .env or frontend/.env for npm start).
-const API_BASE =
-  process.env.REACT_APP_API_URL?.replace(/\/$/, "") || "http://127.0.0.1:3030";
+function normalizeApiBase(raw: string | undefined): string {
+  const fallback = "http://100.52.218.12:3030";
+  if (!raw?.trim()) return fallback;
+  let base = raw.trim().replace(/\/$/, "");
+  base = base.replace(/^https?:\/\/https?:\/\//i, "http://");
+  // http://host/:3030 → http://host:3030
+  base = base.replace(/^(https?:\/\/[^/]+)\/:?(\d+)$/, "$1:$2");
+  return base || fallback;
+}
+
+const API_BASE = normalizeApiBase(process.env.REACT_APP_API_URL);
 
 async function request(path: string, init?: RequestInit): Promise<ApiCallResult> {
   const started = performance.now();
