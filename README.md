@@ -65,116 +65,34 @@ No order book or matching engine is implemented, per spec.
 
 Server starts on `http://127.0.0.1:3030` (override with env `PORT`).
 
-## Run with Docker (Frontend + Backend)
+## Docker (đơn giản)
 
-Docker Compose runs both services: Rust API on port **3030** and React UI (Nginx) on port **8080**.
+Frontend **không build trong Docker** — chỉ copy thư mục `frontend/build` (tránh lỗi `npm` trên EC2).
 
-### Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/) and Docker Compose v2 (`docker compose`)
-
-### 1. Configure API URL for the frontend (important)
-
-Create React App bakes `REACT_APP_API_URL` at **build time**. The value must be reachable from the **user's browser**, not from inside the container.
-
-Edit `docker-compose.yml` under `frontend.build.args`:
-
-```yaml
-args:
-  REACT_APP_API_URL: http://localhost:3030
-```
-
-Examples:
-
-| Scenario | `REACT_APP_API_URL` |
-|----------|---------------------|
-| Same machine | `http://localhost:3030` |
-| Remote server | `http://YOUR_SERVER_IP:3030` |
-| Domain + TLS | `https://api.yourdomain.com` |
-
-Do **not** use `http://backend:3030` — that hostname only works inside Docker, not in the browser.
-
-### 2. Build and start
-
-From the repository root:
+### Cách 1 — một lệnh (khuyên dùng)
 
 ```bash
-docker compose build
-docker compose up -d
+# EC2: đổi IP public của server
+REACT_APP_API_URL=http://100.52.218.12:3030 ./scripts/docker-up.sh
 ```
 
-Check status:
+### Cách 2 — từng bước
 
 ```bash
-docker compose ps
-docker compose logs -f
+cd frontend
+npm install
+REACT_APP_API_URL=http://100.52.218.12:3030 npm run build   # đổi IP
+
+cd ..
+docker compose up -d --build
 ```
 
-### 3. Access the app
+- UI: `http://YOUR_IP:8080`
+- API: `http://YOUR_IP:3030`
 
-| Service | URL |
-|---------|-----|
-| Frontend (UI) | http://localhost:8080 |
-| Backend (API) | http://localhost:3030 |
+Dừng: `docker compose down`
 
-Quick API check:
-
-```bash
-curl http://localhost:3030/symbols
-curl http://localhost:3030/prices
-```
-
-Open the frontend → **Backend API Explorer** to call endpoints from the browser.
-
-### 4. Stop and remove
-
-```bash
-docker compose down
-```
-
-Remove images as well:
-
-```bash
-docker compose down --rmi local
-```
-
-### 5. Rebuild after code changes
-
-```bash
-docker compose build --no-cache
-docker compose up -d
-```
-
-Rebuild only one service:
-
-```bash
-docker compose build backend
-docker compose build frontend
-docker compose up -d
-```
-
-### Docker layout
-
-| File | Purpose |
-|------|---------|
-| `Dockerfile` | Rust backend (multi-stage build) |
-| `docker-compose.yml` | Orchestrates `backend` + `frontend` |
-| `frontend/Dockerfile` | React build + `serve` static server (Node) |
-
-Backend listens on `0.0.0.0`; port is set via env `PORT` (default **3030** in Docker).
-
-### Docker build troubleshooting (frontend `npm ci` fails)
-
-Common on small EC2 instances (t2.micro / 1GB RAM):
-
-| Symptom | Fix |
-|---------|-----|
-| Build stops at `RUN npm ci` / exit 137 | Out of memory — add swap: `sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile` |
-| `ETIMEDOUT` / network errors | Retry build; check instance outbound internet |
-| `package-lock.json` missing | Ensure `frontend/package-lock.json` is on the server (`git pull` / copy file) |
-| Lock out of sync | On dev machine: `cd frontend && npm install`, commit `package-lock.json`, redeploy |
-
-See full npm error: `docker compose build frontend --progress=plain 2>&1 | tee build.log`
+Mở Security Group: **8080**, **3030**, **22**.
 
 ## Test Instructions
 

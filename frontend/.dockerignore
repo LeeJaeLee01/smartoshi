@@ -1,7 +1,4 @@
 node_modules/
-build/
 .git/
 .env
 .env.local
-*.md
-!README.md
