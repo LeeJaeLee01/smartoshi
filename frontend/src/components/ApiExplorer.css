@@ -18,48 +18,177 @@
   max-width: 720px;
 }
 
-.api-explorer__grid {
+.api-explorer__layout {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-lg);
+  align-items: start;
 }
 
-@media (max-width: 900px) {
-  .api-explorer__grid {
+@media (max-width: 960px) {
+  .api-explorer__layout {
     grid-template-columns: 1fr;
   }
 }
 
-.endpoint-group h4 {
-  margin: var(--space-lg) 0 var(--space-xs);
+.api-explorer__table-wrap h3,
+.api-explorer__panel h3 {
+  margin-top: 0;
+  margin-bottom: var(--space-lg);
+}
+
+.endpoint-table {
+  width: 100%;
+  border-collapse: collapse;
   font-size: 14px;
+}
+
+.endpoint-table th {
+  text-align: left;
+  font-size: 12px;
   font-weight: 600;
+  color: var(--color-body-muted);
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid var(--color-hairline);
 }
 
-.endpoint-group ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.endpoint-row {
+  cursor: pointer;
+  transition: background 0.12s;
 }
 
-.endpoint-group li {
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: var(--space-xs);
-  padding: var(--space-xs) 0;
+.endpoint-row:hover {
+  background: var(--color-surface-pearl);
+}
+
+.endpoint-row--active {
+  background: var(--color-canvas-parchment);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.endpoint-row td {
+  padding: var(--space-sm);
   border-bottom: 1px solid var(--color-divider-soft);
+  vertical-align: top;
+}
+
+.endpoint-row code {
+  font-size: 13px;
+}
+
+.endpoint-desc {
+  color: var(--color-body-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.method-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  color: var(--color-on-primary);
+}
+
+.method-badge--get {
+  background: #1a7f37;
+}
+
+.method-badge--post {
+  background: var(--color-primary);
+}
+
+.try-api-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.try-api-url {
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.param-block {
+  margin-bottom: var(--space-lg);
+}
+
+.param-block__title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 var(--space-sm);
+}
+
+.param-table {
+  width: 100%;
+  border-collapse: collapse;
   font-size: 14px;
 }
 
-.endpoint-group .method {
-  font-weight: 600;
-  color: var(--color-primary);
+.param-table th {
+  text-align: left;
+  font-size: 12px;
+  color: var(--color-body-muted);
+  padding: var(--space-xs);
+  border-bottom: 1px solid var(--color-hairline);
 }
 
-.endpoint-group .desc {
-  grid-column: 2;
+.param-table td {
+  padding: var(--space-xs);
+  border-bottom: 1px solid var(--color-divider-soft);
+  vertical-align: middle;
+}
+
+.param-table input,
+.param-table select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+}
+
+.param-loc {
   color: var(--color-body-muted);
   font-size: 12px;
+  text-transform: uppercase;
+  width: 56px;
+}
+
+.required {
+  color: #c41e3a;
+}
+
+.param-error {
+  color: #c41e3a;
+  font-size: 14px;
+  margin: 0 0 var(--space-sm);
+}
+
+.endpoint-params-hint {
+  font-size: 12px;
+  color: var(--color-body-muted);
+}
+
+.try-api-desc {
+  color: var(--color-body-muted);
+  margin: 0 0 var(--space-lg);
+  font-size: 15px;
+}
+
+.try-api-hint {
+  font-size: 14px;
+  color: var(--color-body-muted);
+  margin: 0 0 var(--space-lg);
+}
+
+.preview-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 var(--space-xs);
 }
 
 .api-explorer__panel label {
@@ -85,18 +214,17 @@
   gap: var(--space-sm);
 }
 
-.api-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  margin: var(--space-lg) 0;
+.try-api-run {
+  margin-top: var(--space-md);
 }
 
 .api-result {
-  margin-top: var(--space-lg);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-divider-soft);
 }
 
 .api-result .pre-block {
-  max-height: 320px;
+  max-height: 360px;
   overflow-y: auto;
 }
