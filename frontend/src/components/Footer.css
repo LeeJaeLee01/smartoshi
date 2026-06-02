@@ -1,0 +1,15 @@
+.site-footer {
+  background: var(--color-canvas-parchment);
+  padding: 64px 0;
+  font-size: 12px;
+  color: #333;
+}
+
+.site-footer__inner p {
+  margin: 0 0 var(--space-xs);
+  max-width: 720px;
+}
+
+.site-footer__fine {
+  color: var(--color-body-muted);
+}
